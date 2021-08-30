@@ -1,0 +1,98 @@
+<script>
+	$("#button_save").click(function(){
+	output = "";
+	let getStudId = document.getElementById("studentid").value;
+	let getSchoolName = document.getElementById("id_School_Name").value;
+	let getTeacherName = document.getElementById("id_Teacher_Name").value;
+	var getStudentName = document.getElementById('id_Student_Name').value;
+	let getStudentAddress = document.getElementById("id_Student_Address").value;
+	let getStudentRollNo = document.getElementById("id_Student_Roll_No").value;
+	let csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+	Student_Data = {studid : getStudId, School_Name : getSchoolName, Teacher_Name : getTeacherName ,Student_Name : getStudentName, Student_Address: getStudentAddress , Student_Roll_No: getStudentRollNo , csrfmiddlewaretoken : csrftoken};
+	
+	$.ajax({
+		url : "{% url 'save' %}",
+		method : "POST",
+		data : Student_Data,
+		success:function(data){
+			allStudentData = data.studentList;
+			console.log(allStudentData);
+
+			if (data.status == 'save'){
+				for (i=0;i<allStudentData.length; i++){
+					console.log(allStudentData[i]);
+					output+= 
+					"<tr><td>" +
+					 allStudentData[i].id +
+					  "</td><td>" +
+					   allStudentData[i].School_Name__School_Name +
+					   "</td><td>" +
+					    allStudentData[i].Teacher_Name__Teacher_Name +
+					    "</td><td>" +
+					     allStudentData[i].Student_Name +
+					     "</td><td>" +
+					      allStudentData[i].Student_Address +
+					      "</td><td>" +
+					       allStudentData[i].Student_Roll_No +
+					       
+					        "</td><td> <input type='button' class='btn btn-warning btn-sm btn-edit' value = 'EDIT' data-sid=" + allStudentData[i].id + "> <input type='button' class='btn btn-danger btn-sm btn-del' value = 'DELETE' data-sid=" + allStudentData[i].id +
+					        ">";
+							}
+				$('#tbody').html(output);
+				$("#studentid").val('');
+				$("form")[0].reset();
+			}
+			if(data.status == 0){
+				$("#studentid").val('');
+				$("form")[0].reset();
+
+			}
+		},
+	});
+	});
+
+	$("tbody").on("click",".btn-del", function(){
+		console.log("clicked");
+		let id = $(this).attr("data-sid");
+		let csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+		console.log('id',id);
+		Student_Data = {sid:id,csrfmiddlewaretoken:csrftoken};
+		mythis = this;
+		$.ajax({
+			url : "{% url 'delete' %}",
+			method : "POST",
+			data : Student_Data,
+			success : function(data){
+				if (data.status == 1){
+					$(mythis).closest("tr").fadeOut();
+				}
+				else{
+					console.log("unable to delete");
+				}
+			}
+		})
+	})
+
+
+	$("tbody").on("click",".btn-edit", function(){
+		console.log("edit clicked");
+		let id = $(this).attr("data-sid");
+		let csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+		console.log('id',id);
+		Student_Data = {sid:id,csrfmiddlewaretoken:csrftoken};
+		$.ajax({
+			url : "{% url 'edit' %}",
+			method : "POST",
+			data : Student_Data,
+			dataType : "json",
+			success : function(data){
+				$("#studentid").val(data.id);
+				$("#id_School_Name").val(data.school_name);
+				$("#id_Teacher_Name").val(data.teacher_name);
+				$("#id_Student_Name").val(data.student_name);
+				$("#id_Student_Address").val(data.student_address);
+				$("#id_Student_Roll_No").val(data.student_rollno);
+			}
+		})
+	})
+</script>

@@ -1,0 +1,75 @@
+{% extends 'SMS_CRUD/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container mt-5 setClass">
+    <div class="jumbotron">
+        <h1 style="text-align: center;">Welcome to School Management System</h1>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="jumbotron">
+        <div class="row">
+            <div class=col-sm-3>
+                <h3 class="text-center alert alert-info">REGISTRATION</h3>
+                <form method = "POST" class="post-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="studentname" id = "studentid">
+                    {{form|crispy}}
+                    <br>
+                    <input type="button" class = "btn btn-success" id="button_save" value="Save">
+                </form>
+            </div>
+            <div class="col-sm-9">
+                <h3 class="text-center alert alert-info">STUDENT DATA</h3>
+                <table class="table table-primary table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Student ID</th>
+                    <th scope="col">School_Name</th>
+                    <th scope="col">Teacher_Name</th>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Student Address</th>
+                    <th scope="col">Student Roll No.</th>
+                    <th scope="col">ACTION</th>
+                    <th scope="col">UPLOAD FILE</th>
+                    <th scope="col">DOWNLOAD</th>
+                </tr>
+            </thead>
+            <tbody id = "tbody">
+                {% for student in getStudent %}
+                <tr>
+                    <td>{{student.id}}</td>
+                    <td>{{student.School_Name.School_Name}}</td>
+                    <td>{{student.Teacher_Name.Teacher_Name}}</td>
+                    <td>{{student.Student_Name}}</td>
+                    <td>{{student.Student_Address}}</td>
+                    <td>{{student.Student_Roll_No}}</td>
+                    <td>
+                        <input type="button" data-sid="{{student.id}}" value = "EDIT" class="btn btn-warning btn-sm btn-edit"/> 
+                        <input type="button" data-sid="{{student.id}}" value = "DELETE" class="btn btn-danger btn-sm btn-del"/>
+                    </td>
+                    <td><a class="btn btn-outline-warning btn-sm" href="{% url 'upload' student.id %}">UPLOAD</a>
+                    </td>
+                    {% if student.Student_File == "" %}
+                    <td>
+                      <button class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Waiting...
+                      </button>
+                    </td>
+                    {% else %}
+                    <td><a href="{{student.Student_File.url}}">Download Link</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

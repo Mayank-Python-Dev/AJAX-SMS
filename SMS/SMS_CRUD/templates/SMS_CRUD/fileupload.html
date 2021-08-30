@@ -1,0 +1,29 @@
+{% extends 'SMS_CRUD/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container setClass">
+    <div class="jumbotron">
+        <h1 style="text-align: center;">Welcome to School Management System</h1>
+        
+    <div class="jumbotron">
+        <div class="row">
+            <div class=col-sm-12>
+                	<a class="btn btn-secondary btn-sm" style="text-align: left;" href="{% url 'home' %}">BACK</a>
+                <form method = "POST" class="post-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <br>
+                    <input class="btn float-right btn-outline-info col-lg-6" type=submit value="Save" />
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+{% endblock %}
